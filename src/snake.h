@@ -29,12 +29,29 @@ class Snake {
   std::vector<SDL_Point> body;
 
  private:
-  void UpdateHead();
-  void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);
+  virtual void UpdateHead();
+  virtual void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);
 
   bool growing{false};
   int grid_width;
   int grid_height;
+};
+
+// Inheritance
+class OppSnake : public Snake {
+  public:
+    // constructor / desctructor
+    OppSnake(int grid_width, int grid_height, int id);
+    ~OppSnake();
+
+    void simulate();
+
+  private:
+    int id;
+    void move();
+    //void UpdateHead() override;
+    //void UpdateBody() override;
+    
 };
 
 #endif

@@ -1,12 +1,19 @@
 #include "game.h"
+#include "snake.h"
 #include <iostream>
+#include <thread>
+#include <vector>
 #include "SDL.h"
 
-Game::Game(std::size_t grid_width, std::size_t grid_height)
+Game::Game(std::size_t grid_width, std::size_t grid_height, std::size_t n_opp_snakes)
     : snake(grid_width, grid_height),
+      grid_width(grid_width),
+      grid_height(grid_height),
+      n_opp_snakes(n_opp_snakes),
       engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
-      random_h(0, static_cast<int>(grid_height - 1)) {
+      random_h(0, static_cast<int>(grid_height - 1))      
+{
   PlaceFood();
 }
 
@@ -18,6 +25,26 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   Uint32 frame_duration;
   int frame_count = 0;
   bool running = true;
+
+  // Simulate opponent snake threads
+
+  // Create OppSnake instances with shared pointer.
+  for(size_t ns = 0; ns < n_opp_snakes; ns++){
+    opp_snakes.push_back(std::make_shared<OppSnake>(grid_width, grid_height, ns));
+  }
+  // Initialize opponent snake threads 
+  std::for_each(opp_snakes.begin(), opp_snakes.end(), [](std::shared_ptr<OppSnake> &s){
+    s->simulate();
+    //
+    // Stopped here. Please implement simulate()
+    //
+    //
+    //
+    //
+    //
+    //
+
+  });
 
   while (running) {
     frame_start = SDL_GetTicks();
