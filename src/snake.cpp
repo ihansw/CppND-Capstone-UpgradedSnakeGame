@@ -2,6 +2,9 @@
 #include <cmath>
 #include <iostream>
 
+// initialize static variable
+bool Snake::_USupdated = false;
+
 //Snake::Snake(int grid_width, int grid_height)
 void Snake::Update() {
   SDL_Point prev_cell{
@@ -18,6 +21,8 @@ void Snake::Update() {
   if (current_cell.x != prev_cell.x || current_cell.y != prev_cell.y) {
     UpdateBody(current_cell, prev_cell);
   }
+
+  _USupdated = true;
 }
 
 void Snake::UpdateHead() {
@@ -79,14 +84,21 @@ bool Snake::SnakeCell(int x, int y) {
   return false;
 }
 
+int Snake::get_grid_width(){
+  return grid_width;
+};
+int Snake::get_grid_height(){
+  return grid_height;
+};
+
 // Constructor
 OppSnake::OppSnake(int grid_width, int grid_height, int id): Snake(grid_width, grid_height) {
   // set id
-  id = id;
+  _id = id;
 
   // head_x & head_y are already initialized using on the base class.
   // update head_x & head_y based on the id number
-  switch(id){
+  switch(_id){
     case 0:
       head_x = grid_width / 4;
       head_y = grid_height / 4;
@@ -129,3 +141,37 @@ OppSnake::OppSnake(int grid_width, int grid_height, int id): Snake(grid_width, g
 OppSnake::~OppSnake(){
 
 }
+
+void OppSnake::simulate(){
+  // Start a thread of move() function with this OppSnake object and add it to thread list.
+  _threads.emplace_back(std::thread(&OppSnake::move, this));
+}
+
+void OppSnake::move(){
+  std::unique_lock<std::mutex> lock(_mtx);
+  std::cout << "OppSnake #" << _id << "::move: thread id: " << std::this_thread::get_id() << std::endl;
+
+  // while(true){
+    // Update snake position
+    // std::cout << "OppSnake #" << _id << ", head position updated: (" << head_x << ", " << head_y << 
+    // ") -> (" << head_x + 1 << ", " << head_y << ")" <<std::endl;
+    
+    // if Player Snake is updated, update the position and fulfill promise.
+    // if(USupdated = true){
+    //   updatePos();
+    // }
+    // Wait for main thread to extract new head positions
+}
+
+int OppSnake::updatePos(){
+  head_x = (head_x == get_grid_width()) ? 0 : head_x + 1;
+  head_y = (head_y == get_grid_width()) ? 0 : head_y + 1;
+
+  return head_x;
+}
+
+int OppSnake::getId(){
+  return _id;
+}
+  
+

@@ -2,6 +2,8 @@
 #define SNAKE_H
 
 #include <vector>
+#include <thread>
+#include <mutex>
 #include "SDL.h"
 
 class Snake {
@@ -18,6 +20,8 @@ class Snake {
 
   void GrowBody();
   bool SnakeCell(int x, int y);
+  int get_grid_width();
+  int get_grid_height();
 
   Direction direction = Direction::kUp;
 
@@ -35,6 +39,9 @@ class Snake {
   bool growing{false};
   int grid_width;
   int grid_height;
+
+ protected:
+  static bool _USupdated;
 };
 
 // Inheritance
@@ -45,10 +52,15 @@ class OppSnake : public Snake {
     ~OppSnake();
 
     void simulate();
-
+    int updatePos();
+    int getId();
+    std::mutex _mtx;
+    
   private:
-    int id;
+    int _id;
+    std::vector<std::thread> _threads;
     void move();
+
     //void UpdateHead() override;
     //void UpdateBody() override;
     
