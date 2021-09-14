@@ -7,6 +7,7 @@ bool Snake::_USupdated = false;
 
 //Snake::Snake(int grid_width, int grid_height)
 void Snake::Update() {
+  //std::cout << "This is Update() for Snake" << std::endl;
   SDL_Point prev_cell{
       static_cast<int>(head_x),
       static_cast<int>(
@@ -62,11 +63,13 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) 
   }
 
   // Check if the snake has died.
+  /*
   for (auto const &item : body) {
     if (current_head_cell.x == item.x && current_head_cell.y == item.y) {
       alive = false;
     }
   }
+  */
 }
 
 void Snake::GrowBody() { growing = true; }
@@ -84,17 +87,12 @@ bool Snake::SnakeCell(int x, int y) {
   return false;
 }
 
-int Snake::get_grid_width(){
-  return grid_width;
-};
-int Snake::get_grid_height(){
-  return grid_height;
-};
-
 // Constructor
 OppSnake::OppSnake(int grid_width, int grid_height, int id): Snake(grid_width, grid_height) {
   // set id
   _id = id;
+  _count_d = 0;
+  _curr_d = 0;
 
   // head_x & head_y are already initialized using on the base class.
   // update head_x & head_y based on the id number
@@ -142,6 +140,7 @@ OppSnake::~OppSnake(){
 
 }
 
+// TODO: Need to revisit. 
 void OppSnake::simulate(){
   // Start a thread of move() function with this OppSnake object and add it to thread list.
   _threads.emplace_back(std::thread(&OppSnake::move, this));
@@ -163,11 +162,60 @@ void OppSnake::move(){
     // Wait for main thread to extract new head positions
 }
 
-int OppSnake::updatePos(){
-  head_x = (head_x == get_grid_width()) ? 0 : head_x + 1;
-  head_y = (head_y == get_grid_width()) ? 0 : head_y + 1;
 
-  return head_x;
+// Update OppSnake
+void OppSnake::Update(int random_direction) {
+  //std::cout << "This is Update() for OppSnake" << std::endl;
+  SDL_Point prev_cell{
+      static_cast<int>(head_x),
+      static_cast<int>(
+          head_y)};  // We first capture the head's cell before updating.
+
+  UpdateHead(random_direction);
+  SDL_Point current_cell{
+      static_cast<int>(head_x),
+      static_cast<int>(head_y)};  // Capture the head's cell after updating.
+
+  // Update all of the body vector items if the snake head has moved to a new
+  // cell.
+  if (current_cell.x != prev_cell.x || current_cell.y != prev_cell.y) {
+    UpdateBody(current_cell, prev_cell);
+  }
+}
+
+void OppSnake::UpdateHead(int random_direction){
+  //std::cout << "_curr_d: " << _curr_d << ", random_direction: " << random_direction << std::endl;
+
+  if (_curr_d != random_direction){
+    _count_d++;
+    //std::cout << "_count_d: " << _count_d << std::endl;
+  }
+  if (_count_d == 50){
+    _curr_d = random_direction;
+    _count_d = 0;
+  }
+
+  switch (_curr_d) {
+    case 0:
+      head_y -= speed;
+      break;
+
+    case 1:
+      head_y += speed;
+      break;
+
+    case 2:
+      head_x -= speed;
+      break;
+
+    case 3:
+      head_x += speed;
+      break;
+  }
+
+  // Wrap the Snake around to the beginning if going off of the screen.
+  head_x = fmod(head_x + grid_width, grid_width);
+  head_y = fmod(head_y + grid_height, grid_height);
 }
 
 int OppSnake::getId(){

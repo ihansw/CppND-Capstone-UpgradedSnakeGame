@@ -15,7 +15,8 @@ Game::Game(std::size_t grid_width, std::size_t grid_height, std::size_t n_opp_sn
       n_opp_snakes(n_opp_snakes),
       engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
-      random_h(0, static_cast<int>(grid_height - 1))
+      random_h(0, static_cast<int>(grid_height - 1)),
+      random_d(0,3)
 {
 
   // initialize food vector
@@ -112,32 +113,48 @@ void Game::Update() {
   if (!snake.alive) return;
 
   snake.Update();
+  //std::cout << "UserSnake pos: ("<< snake.head_x << ", " << snake.head_y << ")" << std::endl;
 
-  // Get OppSnake New Positions.
-  std::for_each(opp_snakes.begin(), opp_snakes.end(), [](std::shared_ptr<OppSnake> &s){
-    auto ftrOppSnake = std::async(&OppSnake::updatePos, s);
-    auto result = ftrOppSnake.get();
-    std::cout << "OppSnake id: "<< s->getId() << " - result: " << result << std::endl;
-  });
+  // Update OppSnake positions.
+  for (auto &opp_snake : opp_snakes){
+    int random_direction = random_d(engine);
+    //int random_direction = 0;
+    auto ftrOppSnake = std::async(&OppSnake::Update, opp_snake, random_direction);
+    //auto result = ftrOppSnake.get();
+    //std::cout << "OppSnake id: "<< opp_snake->getId() << " - pos: (" << result.first << ", " << result.second << ")" << std::endl;
+  }
 
   int new_US_x = static_cast<int>(snake.head_x);
   int new_US_y = static_cast<int>(snake.head_y);
 
   // Check if there's food over here
-  std::cout << "size of foods: "<< foods.size() << std::endl;
+  //std::cout << "size of foods: "<< foods.size() << std::endl;
 
-  
-  for(auto food : foods){
+  for(auto &food : foods){
     if (food.getX() == new_US_x && food.getY() == new_US_y) {
       score++;
       auto food_pos = findNewFoodPos();
       food.PlaceFood(food_pos.first, food_pos.second);
+
       // Grow snake and increase speed.
       snake.GrowBody();
       snake.speed += 0.02;
+
+      // Grow opp_snakes and increase speed.
+      for (auto &opp_snake : opp_snakes){
+        opp_snake->GrowBody();
+        opp_snake->speed += 0.02;
+      }
+      
     }
   }
-  
+
+  /*
+  std::cout << "snake size: " << snake.size << std::endl;
+  for (auto &opp_snake : opp_snakes){
+      std::cout << "opp_snake size: " << opp_snake->size << std::endl;
+  } 
+  */
   
 }
 

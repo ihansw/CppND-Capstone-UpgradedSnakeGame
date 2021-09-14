@@ -17,11 +17,8 @@ class Snake {
         head_y(grid_height / 2) {}
 
   void Update();
-
   void GrowBody();
   bool SnakeCell(int x, int y);
-  int get_grid_width();
-  int get_grid_height();
 
   Direction direction = Direction::kUp;
 
@@ -32,16 +29,19 @@ class Snake {
   float head_y;
   std::vector<SDL_Point> body;
 
- private:
-  virtual void UpdateHead();
-  virtual void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);
+ //private:
+  
 
-  bool growing{false};
+ protected:
   int grid_width;
   int grid_height;
 
- protected:
   static bool _USupdated;
+
+  bool growing{false};
+
+  void UpdateHead();
+  void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);
 };
 
 // Inheritance
@@ -52,17 +52,20 @@ class OppSnake : public Snake {
     ~OppSnake();
 
     void simulate();
-    int updatePos();
+    void Update(int random_direction);
+    void UpdateHead(int random_direction);
     int getId();
+
     std::mutex _mtx;
     
   private:
     int _id;
+    int _count_d;
+    int _curr_d;
+
+    // TODO: Need to revisit. This is saying that each instance has _threads??
     std::vector<std::thread> _threads;
     void move();
-
-    //void UpdateHead() override;
-    //void UpdateBody() override;
     
 };
 

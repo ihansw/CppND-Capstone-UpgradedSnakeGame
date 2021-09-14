@@ -76,11 +76,20 @@ void Renderer::Render(Snake const snake, std::vector<Food> foods, std::vector<st
   }
   SDL_RenderFillRect(sdl_renderer, &block);
 
-  // Render OppSnakes' heads
-  for(auto s : opp_snakes){
-    block.x = static_cast<int>(s->head_x) * block.w;
-    block.y = static_cast<int>(s->head_y) * block.h;
-    if (s->alive) {
+  
+  for(auto opp_snake : opp_snakes){
+    // Render snake's body
+    SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    for (SDL_Point const &point : opp_snake->body) {
+      block.x = point.x * block.w;
+      block.y = point.y * block.h;
+      SDL_RenderFillRect(sdl_renderer, &block);
+    }
+
+    // Render OppSnakes' heads
+    block.x = static_cast<int>(opp_snake->head_x) * block.w;
+    block.y = static_cast<int>(opp_snake->head_y) * block.h;
+    if (opp_snake->alive) {
       SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x7A, 0xCC, 0xFF);
     } else {
       SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x00, 0x00, 0xFF);
