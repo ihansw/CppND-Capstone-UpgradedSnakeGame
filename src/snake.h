@@ -52,7 +52,7 @@ class OppSnake : public Snake {
     ~OppSnake();
 
     void simulate();
-    void Update(int random_direction);
+    bool Update(int random_direction, int US_x, int US_y);
     void UpdateHead(int random_direction);
     int getId();
 

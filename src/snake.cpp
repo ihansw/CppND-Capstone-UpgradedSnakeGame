@@ -164,7 +164,7 @@ void OppSnake::move(){
 
 
 // Update OppSnake
-void OppSnake::Update(int random_direction) {
+bool OppSnake::Update(int random_direction, int US_x, int US_y) {
   //std::cout << "This is Update() for OppSnake" << std::endl;
   SDL_Point prev_cell{
       static_cast<int>(head_x),
@@ -181,6 +181,19 @@ void OppSnake::Update(int random_direction) {
   if (current_cell.x != prev_cell.x || current_cell.y != prev_cell.y) {
     UpdateBody(current_cell, prev_cell);
   }
+
+  bool US_alive = true;
+  // Check if UserSnake has crashed into OppSnake's head or body.
+  if (US_x == current_cell.x && US_y == current_cell.y) {
+      US_alive = false;
+    }
+  for (auto const &item : body) {
+    if (US_x == item.x && US_y == item.y) {
+      US_alive = false;
+    }
+  }
+  return US_alive;
+
 }
 
 void OppSnake::UpdateHead(int random_direction){
@@ -221,5 +234,6 @@ void OppSnake::UpdateHead(int random_direction){
 int OppSnake::getId(){
   return _id;
 }
+
   
 

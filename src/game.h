@@ -10,6 +10,22 @@
 #include "snake.h"
 #include "food.h"
 
+class ImmortalMode{
+  public:
+    ImmortalMode(std::shared_ptr<Food> i_food);
+    
+    void activate(std::pair <int,int> new_i_food_pos);
+    bool is_activated();
+    void simulate();
+    void placeIFoodLater(Food &i_food);
+
+  private:
+    std::pair <int,int> _ftr_i_food_pos;
+    std::shared_ptr<Food> _i_food;
+    static std::mutex _MI_mtx;
+    bool _activated; 
+    float _duration_sec;
+};
 
 class Game {
  public:
@@ -19,14 +35,15 @@ class Game {
   int GetScore() const;
   int GetSize() const;
   std::pair <int,int> findNewFoodPos();
+  std::shared_ptr<ImmortalMode> i_mode;
 
  private:
   Snake snake;
   std::vector<std::shared_ptr<OppSnake>> opp_snakes;
   int n_opp_snakes;
-  // SDL_Point food;
   std::vector<Food> foods;
-
+  std::shared_ptr<Food> i_food;
+  
   int grid_width;
   int grid_height;
 
@@ -38,10 +55,8 @@ class Game {
   std::uniform_int_distribution<int> random_h;
   std::uniform_int_distribution<int> random_d;
 
-  //void PlaceFood();
+  void PlaceIFood();
   void Update();
-  
 };
-
 
 #endif

@@ -40,7 +40,9 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-void Renderer::Render(Snake const snake, std::vector<Food> foods, std::vector<std::shared_ptr<OppSnake>> opp_snakes) {
+void Renderer::Render(Snake const snake, std::vector<std::shared_ptr<OppSnake>> opp_snakes, 
+                      std::vector<Food> foods, std::shared_ptr<Food> i_food,
+                      bool i_mode_activated) {
   SDL_Rect block;
   block.w = screen_width / grid_width;
   block.h = screen_height / grid_height;
@@ -56,20 +58,50 @@ void Renderer::Render(Snake const snake, std::vector<Food> foods, std::vector<st
     block.y = food.getY() * block.h;
     SDL_RenderFillRect(sdl_renderer, &block);
   }
-  
 
-  // Render snake's body
-  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+  // Render Immortal Food
+  SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0xE6, 0xE6, 0xFA);
+  block.x = i_food->getX() * block.w;
+  block.y = i_food->getY() * block.h;
+  SDL_RenderFillRect(sdl_renderer, &block);
+
+  // Render OppSnakes's body
+  for(auto opp_snake : opp_snakes){
+    for (SDL_Point const &point : opp_snake->body) {
+      SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+      block.x = point.x * block.w;
+      block.y = point.y * block.h;
+      SDL_RenderFillRect(sdl_renderer, &block);
+  }
+
+  // Render OppSnakes' heads
+  for(auto opp_snake : opp_snakes){
+    SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x00, 0xFF, 0x00);
+    block.x = static_cast<int>(opp_snake->head_x) * block.w;
+    block.y = static_cast<int>(opp_snake->head_y) * block.h;
+    SDL_RenderFillRect(sdl_renderer, &block);
+  }
+
+  // Render User Snake's body
+  if (i_mode_activated){
+    SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0xFF, 0x00, 0x00);
+  } else {
+    SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+  }
+  
   for (SDL_Point const &point : snake.body) {
     block.x = point.x * block.w;
     block.y = point.y * block.h;
     SDL_RenderFillRect(sdl_renderer, &block);
   }
 
-  // Render snake's head
+  // Render User Snake's head
   block.x = static_cast<int>(snake.head_x) * block.w;
   block.y = static_cast<int>(snake.head_y) * block.h;
-  if (snake.alive) {
+  if (i_mode_activated){
+    SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x00, 0xFF, 0x00);
+  }
+  else if (snake.alive) {
     SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x7A, 0xCC, 0xFF);
   } else {
     SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x00, 0x00, 0xFF);
@@ -77,24 +109,7 @@ void Renderer::Render(Snake const snake, std::vector<Food> foods, std::vector<st
   SDL_RenderFillRect(sdl_renderer, &block);
 
   
-  for(auto opp_snake : opp_snakes){
-    // Render snake's body
-    SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    for (SDL_Point const &point : opp_snake->body) {
-      block.x = point.x * block.w;
-      block.y = point.y * block.h;
-      SDL_RenderFillRect(sdl_renderer, &block);
-    }
 
-    // Render OppSnakes' heads
-    block.x = static_cast<int>(opp_snake->head_x) * block.w;
-    block.y = static_cast<int>(opp_snake->head_y) * block.h;
-    if (opp_snake->alive) {
-      SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x7A, 0xCC, 0xFF);
-    } else {
-      SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x00, 0x00, 0xFF);
-    }
-    SDL_RenderFillRect(sdl_renderer, &block);
   };
 
   // Update Screen

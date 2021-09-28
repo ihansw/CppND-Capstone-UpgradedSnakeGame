@@ -3,6 +3,7 @@
 
 class Food {
   public:
+    Food();
     Food(int food_x, int food_y);
     //~Food();
 
@@ -15,6 +16,5 @@ class Food {
     int _y;
 
 };
-
 
 #endif
