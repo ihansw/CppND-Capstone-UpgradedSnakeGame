@@ -35,25 +35,25 @@ class Game {
   int GetScore() const;
   int GetSize() const;
   std::pair <int,int> findNewFoodPos();
-  std::shared_ptr<ImmortalMode> i_mode;
-
- private:
-  Snake snake;
-  std::vector<std::shared_ptr<OppSnake>> opp_snakes;
-  int n_opp_snakes;
-  std::vector<Food> foods;
-  std::shared_ptr<Food> i_food;
   
-  int grid_width;
-  int grid_height;
+ private:
+  Snake _snake;
+  std::vector<std::shared_ptr<OppSnake>> _opp_snakes;
+  int _n_opp_snakes;
+  std::vector<Food> _foods;
+  std::shared_ptr<Food> _i_food;
+  std::shared_ptr<ImmortalMode> _i_mode;
 
-  int score{0};
+  int _grid_width;
+  int _grid_height;
 
-  std::random_device dev;
-  std::mt19937 engine;
-  std::uniform_int_distribution<int> random_w;
-  std::uniform_int_distribution<int> random_h;
-  std::uniform_int_distribution<int> random_d;
+  int _score{0};
+
+  std::random_device _dev;
+  std::mt19937 _engine;
+  std::uniform_int_distribution<int> _random_w;
+  std::uniform_int_distribution<int> _random_h;
+  std::uniform_int_distribution<int> _random_d;
 
   void PlaceIFood();
   void Update();

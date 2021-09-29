@@ -2,12 +2,11 @@
 #include <cmath>
 #include <iostream>
 
-// initialize static variable
+// Initialize static variable
 bool Snake::_USupdated = false;
 
-//Snake::Snake(int grid_width, int grid_height)
+// Update UserSnake Status
 void Snake::Update() {
-  //std::cout << "This is Update() for Snake" << std::endl;
   SDL_Point prev_cell{
       static_cast<int>(head_x),
       static_cast<int>(
@@ -46,33 +45,24 @@ void Snake::UpdateHead() {
   }
 
   // Wrap the Snake around to the beginning if going off of the screen.
-  head_x = fmod(head_x + grid_width, grid_width);
-  head_y = fmod(head_y + grid_height, grid_height);
+  head_x = fmod(head_x + _grid_width, _grid_width);
+  head_y = fmod(head_y + _grid_height, _grid_height);
 }
 
 void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) {
   // Add previous head location to vector
   body.push_back(prev_head_cell);
 
-  if (!growing) {
+  if (!_growing) {
     // Remove the tail from the vector.
     body.erase(body.begin());
   } else {
-    growing = false;
+    _growing = false;
     size++;
   }
-
-  // Check if the snake has died.
-  /*
-  for (auto const &item : body) {
-    if (current_head_cell.x == item.x && current_head_cell.y == item.y) {
-      alive = false;
-    }
-  }
-  */
 }
 
-void Snake::GrowBody() { growing = true; }
+void Snake::GrowBody() { _growing = true; }
 
 // Inefficient method to check if cell is occupied by snake.
 bool Snake::SnakeCell(int x, int y) {
@@ -132,40 +122,14 @@ OppSnake::OppSnake(int grid_width, int grid_height, int id): Snake(grid_width, g
     default:
         std::cout << "Invalid Number of Opponent Snakes" << std::endl;
   }
-
 }
 
 // Desctructor
 OppSnake::~OppSnake(){
-
 }
-
-// TODO: Need to revisit. 
-void OppSnake::simulate(){
-  // Start a thread of move() function with this OppSnake object and add it to thread list.
-  _threads.emplace_back(std::thread(&OppSnake::move, this));
-}
-
-void OppSnake::move(){
-  std::unique_lock<std::mutex> lock(_mtx);
-  std::cout << "OppSnake #" << _id << "::move: thread id: " << std::this_thread::get_id() << std::endl;
-
-  // while(true){
-    // Update snake position
-    // std::cout << "OppSnake #" << _id << ", head position updated: (" << head_x << ", " << head_y << 
-    // ") -> (" << head_x + 1 << ", " << head_y << ")" <<std::endl;
-    
-    // if Player Snake is updated, update the position and fulfill promise.
-    // if(USupdated = true){
-    //   updatePos();
-    // }
-    // Wait for main thread to extract new head positions
-}
-
 
 // Update OppSnake
 bool OppSnake::Update(int random_direction, int US_x, int US_y) {
-  //std::cout << "This is Update() for OppSnake" << std::endl;
   SDL_Point prev_cell{
       static_cast<int>(head_x),
       static_cast<int>(
@@ -197,11 +161,8 @@ bool OppSnake::Update(int random_direction, int US_x, int US_y) {
 }
 
 void OppSnake::UpdateHead(int random_direction){
-  //std::cout << "_curr_d: " << _curr_d << ", random_direction: " << random_direction << std::endl;
-
   if (_curr_d != random_direction){
     _count_d++;
-    //std::cout << "_count_d: " << _count_d << std::endl;
   }
   if (_count_d == 50){
     _curr_d = random_direction;
@@ -227,8 +188,8 @@ void OppSnake::UpdateHead(int random_direction){
   }
 
   // Wrap the Snake around to the beginning if going off of the screen.
-  head_x = fmod(head_x + grid_width, grid_width);
-  head_y = fmod(head_y + grid_height, grid_height);
+  head_x = fmod(head_x + _grid_width, _grid_width);
+  head_y = fmod(head_y + _grid_height, _grid_height);
 }
 
 int OppSnake::getId(){

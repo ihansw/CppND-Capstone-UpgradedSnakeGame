@@ -11,8 +11,8 @@ class Snake {
   enum class Direction { kUp, kDown, kLeft, kRight };
 
   Snake(int grid_width, int grid_height)
-      : grid_width(grid_width),
-        grid_height(grid_height),
+      : _grid_width(grid_width),
+        _grid_height(grid_height),
         head_x(grid_width / 2),
         head_y(grid_height / 2) {}
 
@@ -29,44 +29,33 @@ class Snake {
   float head_y;
   std::vector<SDL_Point> body;
 
- //private:
-  
-
  protected:
-  int grid_width;
-  int grid_height;
+  int _grid_width;
+  int _grid_height;
 
   static bool _USupdated;
 
-  bool growing{false};
+  bool _growing{false};
 
   void UpdateHead();
   void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);
 };
 
-// Inheritance
+// Inherit from Snake to create Opponent snakes
 class OppSnake : public Snake {
   public:
     // constructor / desctructor
     OppSnake(int grid_width, int grid_height, int id);
     ~OppSnake();
 
-    void simulate();
     bool Update(int random_direction, int US_x, int US_y);
     void UpdateHead(int random_direction);
     int getId();
-
-    std::mutex _mtx;
     
   private:
     int _id;
     int _count_d;
-    int _curr_d;
-
-    // TODO: Need to revisit. This is saying that each instance has _threads??
-    std::vector<std::thread> _threads;
-    void move();
-    
+    int _curr_d;    
 };
 
 #endif

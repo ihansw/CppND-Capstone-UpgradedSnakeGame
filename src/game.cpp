@@ -7,54 +7,55 @@
 #include <algorithm>
 #include "SDL.h"
 #include "food.h"
-// #include <memory>
 
 Game::Game(std::size_t grid_width, std::size_t grid_height, std::size_t n_opp_snakes)
-    : snake(grid_width, grid_height),
-      grid_width(grid_width),
-      grid_height(grid_height),
-      n_opp_snakes(n_opp_snakes),
-      engine(dev()),
-      random_w(0, static_cast<int>(grid_width - 1)),
-      random_h(0, static_cast<int>(grid_height - 1)),
-      random_d(0,3)
+    : _snake(grid_width, grid_height),
+      _grid_width(grid_width),
+      _grid_height(grid_height),
+      _n_opp_snakes(n_opp_snakes),
+      _engine(_dev()),
+      _random_w(0, static_cast<int>(grid_width - 1)),
+      _random_h(0, static_cast<int>(grid_height - 1)),
+      _random_d(0,3)
 {
-  // initialize food vector
+  // Initialize food vector
   for(int i = 0; i < 3 ; i++){  
     auto food_pos = findNewFoodPos();
     Food food(food_pos.first, food_pos.second);
-    foods.push_back(food);
+    _foods.push_back(food);
   }
 
-  // initialize ImmortalFood
-  i_food = std::make_shared<Food>();
+  // Initialize ImmortalFood
+  _i_food = std::make_shared<Food>();
   PlaceIFood();
 
-  // initialize ImmortalMode
-  i_mode = std::make_shared<ImmortalMode>(i_food);
+  // Initialize ImmortalMode
+  _i_mode = std::make_shared<ImmortalMode>(_i_food);
 }
 
+// Place ImmortalFood
 void Game::PlaceIFood(){
   int x, y;
   while(true){
-    x = random_w(engine);
-    y = random_h(engine);
+    x = _random_w(_engine);
+    y = _random_h(_engine);
 
-    if (!snake.SnakeCell(x,y)){
-      i_food->PlaceFood(x,y);
+    if (!_snake.SnakeCell(x,y)){
+      _i_food->PlaceFood(x,y);
       return;
     }
   }
 }
 
+// Find a random new position on the grid for new food
 std::pair <int,int> Game::findNewFoodPos(){
   int x, y;
   while (true) {
-    x = random_w(engine);
-    y = random_h(engine);
+    x = _random_w(_engine);
+    y = _random_h(_engine);
     // Check that the location is not occupied by a snake item before placing
     // food.
-    if (!snake.SnakeCell(x,y)) {
+    if (!_snake.SnakeCell(x,y)) {
       return std::make_pair(x,y);
     }
   }
@@ -70,20 +71,20 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   bool running = true;
 
   // Create OppSnake instances with shared pointer.
-  for(size_t ns = 0; ns < n_opp_snakes; ns++){
-    opp_snakes.push_back(std::make_shared<OppSnake>(grid_width, grid_height, ns));
+  for(size_t ns = 0; ns < _n_opp_snakes; ns++){
+    _opp_snakes.push_back(std::make_shared<OppSnake>(_grid_width, _grid_height, ns));
   }
 
   // Initialize ImmortalMode Thread
-  std::thread t(&ImmortalMode::simulate, i_mode);
+  std::thread t(&ImmortalMode::simulate, _i_mode);
 
   while (running) {
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(running, snake);
+    controller.HandleInput(running, _snake);
     Update();
-    renderer.Render(snake, opp_snakes, foods, i_food, i_mode->is_activated());
+    renderer.Render(_snake, _opp_snakes, _foods, _i_food, _i_mode->is_activated());
 
     frame_end = SDL_GetTicks();
 
@@ -94,7 +95,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
     // After every second, update the window title.
     if (frame_end - title_timestamp >= 1000) {
-      renderer.UpdateWindowTitle(score, frame_count);
+      renderer.UpdateWindowTitle(_score, frame_count);
       frame_count = 0;
       title_timestamp = frame_end;
     }
@@ -109,42 +110,41 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 }
 
 void Game::Update() {
-  if (!snake.alive) return;
+  if (!_snake.alive) return;
 
-  snake.Update();
+  _snake.Update();
 
-  int new_US_x = static_cast<int>(snake.head_x);
-  int new_US_y = static_cast<int>(snake.head_y);
+  int new_US_x = static_cast<int>(_snake.head_x);
+  int new_US_y = static_cast<int>(_snake.head_y);
 
-  // initialize crash_bool_list with all true
+  // Initialize crash_bool_list with all true
   std::vector<bool> crash_bool_list;
-  for(int i = 0; i < opp_snakes.size(); i++){
+  for(int i = 0; i < _opp_snakes.size(); i++){
     crash_bool_list.push_back(true);
   }
   
   // Update OppSnake positions.
   int ind = 0;
-  for (auto &opp_snake : opp_snakes){
-    int random_direction = random_d(engine);
+  for (auto &opp_snake : _opp_snakes){
+    int random_direction = _random_d(_engine);
     auto ftrOppSnake = std::async(&OppSnake::Update, opp_snake, random_direction, new_US_x, new_US_y);
     crash_bool_list[ind] = ftrOppSnake.get();
-
     ind++;
   }
   
-  // Check if there's food over here
-  for(auto &food : foods){
+  // Check if there's food at UserSnake's position
+  for(auto &food : _foods){
     if (food.getX() == new_US_x && food.getY() == new_US_y) {
-      score++;
+      _score++;
       auto food_pos = findNewFoodPos();
       food.PlaceFood(food_pos.first, food_pos.second);
 
       // Grow snake and increase speed.
-      snake.GrowBody();
-      snake.speed += 0.02;
+      _snake.GrowBody();
+      _snake.speed += 0.02;
 
       // Grow opp_snakes and increase speed.
-      for (auto &opp_snake : opp_snakes){
+      for (auto &opp_snake : _opp_snakes){
         opp_snake->GrowBody();
         opp_snake->speed += 0.02;
       }
@@ -152,23 +152,23 @@ void Game::Update() {
   }
 
   // Check if UserSnake crashed into any of the OppSnakes.
-  snake.alive = std::all_of(crash_bool_list.begin(), crash_bool_list.end(), [](bool crash){return crash;});
+  _snake.alive = std::all_of(crash_bool_list.begin(), crash_bool_list.end(), [](bool crash){return crash;});
 
-  // If Immortal Mode is activated, the user snake won't die even if it touched other snakes.
-  if(snake.alive == false && i_mode->is_activated() == true){
-    snake.alive = true;
+  // If Immortal Mode is activated, the UserSnake won't die even if it touched other snakes.
+  if(_snake.alive == false && _i_mode->is_activated() == true){
+    _snake.alive = true;
   }
 
   // Activate Immortal Mode.
-  if (i_food->getX() == new_US_x && i_food->getY() == new_US_y){
+  if (_i_food->getX() == new_US_x && _i_food->getY() == new_US_y){
     auto food_pos = findNewFoodPos();
-    i_mode->activate(food_pos);
-    i_food->PlaceFood(-1, -1);
+    _i_mode->activate(food_pos);
+    _i_food->PlaceFood(-1, -1);
   }
 }
 
-int Game::GetScore() const { return score; }
-int Game::GetSize() const { return snake.size; }
+int Game::GetScore() const { return _score; }
+int Game::GetSize() const { return _snake.size; }
 
 std::mutex ImmortalMode::_MI_mtx;
 
@@ -181,6 +181,8 @@ ImmortalMode::ImmortalMode(std::shared_ptr<Food> i_food) : _activated(false),
 
 void ImmortalMode::simulate(){
   auto last_updated = std::chrono::system_clock::now();
+
+  // Use mutex lock to safely access _activate.
   std::unique_lock<std::mutex> lck(_MI_mtx);
   lck.unlock();
   while(true){
@@ -188,6 +190,8 @@ void ImmortalMode::simulate(){
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
     lck.lock();
+
+    // If _activated becomes true, wait for 5 seconds and place the ImmortalFood again
     if(_activated == true){
       std::cout << "Immortal Mode activated!" << std::endl;
       lck.unlock();
@@ -213,15 +217,15 @@ void ImmortalMode::simulate(){
   }
 }
 
+// Lock and return _activated
 bool ImmortalMode::is_activated(){
-  // lock and return _activated
   std::unique_lock<std::mutex> lck(_MI_mtx);
   return _activated;
 }
 
 // User Snake ate the ImmortalFood. Activate immortal mode.
+// Also, input the next position of the new ImmortalFood
 void ImmortalMode::activate(std::pair <int,int> new_i_food_pos){
-    // lock and update the _activated
   std::unique_lock<std::mutex> lck(_MI_mtx);
   _activated = true;
   _ftr_i_food_pos = new_i_food_pos;
