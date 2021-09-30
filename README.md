@@ -59,13 +59,13 @@ __Compiling and Testing (All Rubric Points REQUIRED)__
 
 |DONE | CRITERIA | MEETS SPECIFICATIONS| WHERE |
 |-- | -- | --| -- |
-| :heavy_check_mark: | The submission must compile and run. | The project code must compile and run without errors. We strongly recommend using cmake and make, as provided in the starter repos. If you choose another build system, the code must compile on any reviewer platform. |
+| :heavy_check_mark: | The submission must compile and run. | The project code must compile and run without errors. <br />We strongly recommend using cmake and make, as provided in the starter repos. If you choose another build system, the code must compile on any reviewer platform. |
 
 __Loops, Functions, I/O__
 
 |DONE | CRITERIA | MEETS SPECIFICATIONS| WHERE |
 |-- | -- | --| -- |
-| :heavy_check_mark: | The project demonstrates an understanding of C++ functions and control structures.| A variety of control structures are used in the project. The project code is clearly organized into functions.| Every *.cpp file |
+| :heavy_check_mark: | The project demonstrates an understanding of C++ functions and control structures.| A variety of control structures are used in the project. <br />The project code is clearly organized into functions.| Every *.cpp file |
 | :heavy_check_mark: | The project reads data from a file and process the data, or the program writes data to a file. | The project reads data from an external file or writes data to a file as part of the necessary operation of the program.| reads image frame in main.cpp  |
 | :heavy_check_mark: | The project accepts user input and processes the input.|The project accepts input from a user as part of the necessary operation of the program.|  main.cpp parses command line arguments |
 
