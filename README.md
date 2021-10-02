@@ -2,7 +2,7 @@
 
 This is a Snake Game for the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). This code was modified from a base starter repo created by Udacity that was inspired by [this](https://codereview.stackexchange.com/questions/212296/snake-game-in-c-with-sdl) excellent StackOverflow post and set of responses.
 
-<img src="snake_game.gif"/>
+<img src="Upgraded_Snake_Game.gif"/>
 
 Compared to the starter code, many additional features were added to upgrade the game using advanced object-oriented programming (Classes & Inheritance), dynamic memory management (Smart Pointers), and Concurrency (Multi threads & mutex locks) techniques.
 
