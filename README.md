@@ -10,7 +10,7 @@ Compared to the starter code, many additional features were added to upgrade the
 * Use keyboard arrows to move your snake (Head color = Blue).
 * Eat food (Color = Yellow) to get points. When your snake eat food, the speed of the game and body of all snakes in the game will increase.
 * Do NOT touch opponent snakes (Head color = pink) with your snake's head. (Your snake body touching another snake's body is okay). The game will end when it happens.
-* Eat Power Food (Color = Light Blue) to activate "Immortal Mode" for 5 seconds. When you are in Immortal Mode, you do not die even if your snake's head touches another snake.
+* Eat Power Food (Color = Cyan) to activate "Immortal Mode" for 5 seconds. When you are in Immortal Mode, you do not die even if your snake's head touches another snake.
 
 
 ## Dependencies for Running Locally
