@@ -21,7 +21,7 @@ Game::Game(std::size_t grid_width, std::size_t grid_height, std::size_t n_opp_sn
   // Initialize food vector
   for(int i = 0; i < 3 ; i++){  
     auto food_pos = findNewFoodPos();
-    Food food(food_pos.first, food_pos.second);
+    Food food(std::move(food_pos.first), std::move(food_pos.second));
     _foods.push_back(food);
   }
 
@@ -127,7 +127,7 @@ void Game::Update() {
   int ind = 0;
   for (auto &opp_snake : _opp_snakes){
     int random_direction = _random_d(_engine);
-    auto ftrOppSnake = std::async(&OppSnake::Update, opp_snake, random_direction, new_US_x, new_US_y);
+    auto ftrOppSnake = std::async(&OppSnake::Update, opp_snake, std::move(random_direction), new_US_x, new_US_y);
     crash_bool_list[ind] = ftrOppSnake.get();
     ind++;
   }
@@ -137,7 +137,7 @@ void Game::Update() {
     if (food.getX() == new_US_x && food.getY() == new_US_y) {
       _score++;
       auto food_pos = findNewFoodPos();
-      food.PlaceFood(food_pos.first, food_pos.second);
+      food.PlaceFood(std::move(food_pos.first), std::move(food_pos.second));
 
       // Grow snake and increase speed.
       _snake.GrowBody();
@@ -162,7 +162,7 @@ void Game::Update() {
   // Activate Immortal Mode.
   if (_i_food->getX() == new_US_x && _i_food->getY() == new_US_y){
     auto food_pos = findNewFoodPos();
-    _i_mode->activate(food_pos);
+    _i_mode->activate(std::move(food_pos));
     _i_food->PlaceFood(-1, -1);
   }
 }
