@@ -84,7 +84,7 @@ __Object Oriented Programming__
 | :heavy_check_mark: | Classes abstract implementation details from their interfaces. | All class member functions document their effects, either through function names, comments, or formal documentation. Member functions do not change program state in undocumented ways.| All *.cpp and *.h files |
 | :heavy_check_mark: | Classes encapsulate behavior. | Appropriate data and functions are grouped into classes. Member data that is subject to an invariant is hidden from the user. State is accessed via member functions.| All *.cpp and *.h files |
 | :heavy_check_mark: | Classes follow an appropriate inheritance hierarchy. | Inheritance hierarchies are logical. Composition is used instead of inheritance when appropriate. Abstract classes are composed of pure virtual functions. Override functions are specified.| snake.h (Line 45-59), snake.cpp |
-| :heavy_check_mark: | Overloaded functions allow the same function to operate on different parameters. | snake.h (Line 51, 52) |
+| :heavy_check_mark: | Overloaded functions allow the same function to operate on different parameters. | One function is overloaded with different signatures for the same function name. | snake.h (Line 51, 52) |
 |  | Derived class functions override virtual base class functions. |One member function in an inherited class overrides a virtual base class member function.| |
 |  | Templates generalize functions in the project. | One function is declared with a template that allows it to accept a generic parameter.| Done so with in buffer.h|
 
