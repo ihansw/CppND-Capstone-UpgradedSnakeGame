@@ -1,12 +1,17 @@
-# CPPND: Capstone Snake Game Example
+# CPPND: Capstone Advanced Snake Game
 
-This is a starter repo for the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). The code for this repo was inspired by [this](https://codereview.stackexchange.com/questions/212296/snake-game-in-c-with-sdl) excellent StackOverflow post and set of responses.
+This is a Snake Game for the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). This code was modified from a base starter repo created by Udacity that was inspired by [this](https://codereview.stackexchange.com/questions/212296/snake-game-in-c-with-sdl) excellent StackOverflow post and set of responses.
 
 <img src="snake_game.gif"/>
 
-The Capstone Project gives you a chance to integrate what you've learned throughout this program. This project will become an important part of your portfolio to share with current and future colleagues and employers.
+Compared to the starter code, many additional features were added to upgrade the game using advanced object-oriented programming (Classes & Inheritance), dynamic memory management (Smart Pointers), and Concurrency (Multi threads & mutex locks) techniques.
 
-In this project, you can build your own C++ application or extend this Snake game, following the principles you have learned throughout this Nanodegree Program. This project will demonstrate that you can independently create applications using a wide range of C++ features.
+## How To Play Game
+* Use keyboard arrows to move your snake (Head color = Blue).
+* Eat food (Color = Yellow) to get points. When your snake eat food, the speed of the game and body of all snakes in the game will increase.
+* Do NOT touch opponent snakes (Head color = pink) with your snake's head. (Your snake body touching another snake's body is okay). The game will end when it happens.
+* Eat Power Food (Color = Light Blue) to activate "Immortal Mode" for 5 seconds. When you are in Immortal Mode, you do not die even if your snake's head touches another snake.
+
 
 ## Dependencies for Running Locally
 * cmake >= 3.7
