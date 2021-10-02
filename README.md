@@ -86,7 +86,7 @@ __Object Oriented Programming__
 | :heavy_check_mark: | Classes follow an appropriate inheritance hierarchy. | Inheritance hierarchies are logical. Composition is used instead of inheritance when appropriate. Abstract classes are composed of pure virtual functions. Override functions are specified.| snake.h (Line 45-59), snake.cpp |
 | :heavy_check_mark: | Overloaded functions allow the same function to operate on different parameters. | One function is overloaded with different signatures for the same function name. | snake.h (Line 51, 52) |
 |  | Derived class functions override virtual base class functions. |One member function in an inherited class overrides a virtual base class member function.| |
-|  | Templates generalize functions in the project. | One function is declared with a template that allows it to accept a generic parameter.| Done so with in buffer.h|
+|  | Templates generalize functions in the project. | One function is declared with a template that allows it to accept a generic parameter.| |
 
 __Memory Management__
 
